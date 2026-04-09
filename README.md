@@ -1,5 +1,7 @@
 # HRAgent — HR 智能问答系统
 
+[English](./README_EN.md) | 中文
+
 基于 LangChain Agent + RAG 的员工手册与 HR 政策智能问答系统。
 
 ## 技术栈
@@ -33,7 +35,7 @@
 | **磁盘** | 30 GB SSD | 50 GB SSD |
 | **系统** | Linux (Ubuntu 20.04+) | — |
 | **依赖** | Docker + Docker Compose | — |
-| **网络** | 需要外网访问（拉取镜像 + DeepSeek API 调用） | — |
+| **网络** | 需要互联网访问（拉取镜像 + DeepSeek API 调用） | — |
 
 > ⚠️ **内存说明**：Milvus 向量数据库约需 2.5 GB，BGE Embedding 模型加载约需 1.5 GB，合计最低需要 **6-7 GB** 可用内存。4 GB 及以下配置无法正常运行。
 
