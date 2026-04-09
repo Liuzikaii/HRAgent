@@ -1,132 +1,147 @@
-# HRAgent — HR 智能问答系统
+<div align="center">
 
-[English](./README_EN.md) | 中文
+# 🤖 HRAgent
 
-基于 LangChain Agent + RAG 的员工手册与 HR 政策智能问答系统。
+**An intelligent HR policy Q&A system powered by LangChain Agent + RAG**
 
-## 技术栈
+[![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)](https://python.org)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)](https://nextjs.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![DeepSeek](https://img.shields.io/badge/LLM-DeepSeek-4f46e5)](https://deepseek.com)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-| 组件 | 技术 |
-|------|------|
-| LLM | DeepSeek (deepseek-chat) |
-| Agent 框架 | LangChain |
-| Embedding | BAAI/bge-small-zh-v1.5 |
-| 向量数据库 | Milvus |
-| 关系数据库 | PostgreSQL |
-| 后端 API | FastAPI |
-| 前端 | Next.js + Shadcn/ui + TailwindCSS |
-| 部署 | Docker Compose |
+[简体中文](./README_ZH.md) | English
 
-## 功能特性
+</div>
 
-- 📄 **文档管理**：支持上传 PDF / Markdown / TXT 格式的 HR 文档
-- 🔍 **RAG 检索**：基于 BGE 中文 Embedding + Milvus 向量检索，精准匹配相关文档段落
-- 🤖 **智能问答**：DeepSeek LLM 根据检索到的文档内容，专业回答 HR 政策问题
-- 💬 **流式对话**：SSE 流式输出，实时显示回答内容
-- 📝 **会话管理**：支持多会话创建、切换、删除，保存对话历史
-- 🎨 **现代化 UI**：暗色主题，Markdown 渲染，响应式设计
+---
 
-## 服务器配置要求
+## ✨ Features
 
-|  | 最低配置 | 推荐配置 |
-|------|---------|---------|
-| **CPU** | 2 核 | 4 核 |
-| **内存** | 8 GB | 16 GB |
-| **磁盘** | 30 GB SSD | 50 GB SSD |
-| **系统** | Linux (Ubuntu 20.04+) | — |
-| **依赖** | Docker + Docker Compose | — |
-| **网络** | 需要互联网访问（拉取镜像 + DeepSeek API 调用） | — |
+- 📄 **Document Management** — Upload PDF / Markdown / TXT HR documents
+- 🔍 **RAG Retrieval** — BGE Chinese Embedding + Milvus vector search for precise document matching
+- 🤖 **Intelligent Q&A** — DeepSeek LLM answers HR policy questions grounded in retrieved documents
+- 💬 **Streaming Chat** — Real-time SSE streaming responses
+- 📝 **Session Management** — Create, switch, and delete chat sessions with full history
+- 🎨 **Modern UI** — Dark theme, Markdown rendering, responsive design
 
-> ⚠️ **内存说明**：Milvus 向量数据库约需 2.5 GB，BGE Embedding 模型加载约需 1.5 GB，合计最低需要 **6-7 GB** 可用内存。4 GB 及以下配置无法正常运行。
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **LLM** | DeepSeek (`deepseek-chat`) |
+| **Agent** | LangChain |
+| **Embedding** | BAAI/bge-small-zh-v1.5 |
+| **Vector DB** | Milvus Standalone |
+| **Database** | PostgreSQL 16 |
+| **Backend** | FastAPI + Uvicorn |
+| **Frontend** | Next.js · Shadcn/ui · TailwindCSS |
+| **Deployment** | Docker Compose (6 services) |
+
+## 📋 System Requirements
+
+|  | Minimum | Recommended |
+|------|---------|-------------|
+| **CPU** | 2 Cores | 4 Cores |
+| **RAM** | 8 GB | 16 GB |
+| **Disk** | 30 GB SSD | 50 GB SSD |
+| **OS** | Linux (Ubuntu 20.04+) | — |
+| **Dependencies** | Docker · Docker Compose | — |
+| **Network** | Internet access (image pulls + DeepSeek API) | — |
+
+> [!WARNING]
+> Milvus requires ~2.5 GB and the BGE Embedding model ~1.5 GB. A minimum of **6–7 GB available RAM** is needed. Machines with 4 GB or less **cannot** run this project.
 
 <details>
-<summary>各服务内存占用明细</summary>
+<summary>Per-service memory breakdown</summary>
 
-| 服务 | 内存占用 |
-|------|---------|
+| Service | Memory |
+|---------|--------|
 | Milvus Standalone | ~2 GB |
-| etcd | ~256 MB |
-| MinIO | ~256 MB |
+| etcd + MinIO | ~512 MB |
 | PostgreSQL | ~256 MB |
-| FastAPI + BGE Embedding | ~2-3 GB |
-| Next.js 前端 | ~256 MB |
+| FastAPI + BGE Embedding | ~2–3 GB |
+| Next.js Frontend | ~256 MB |
 
 </details>
 
-## 快速启动
+## 🚀 Quick Start
 
-### 1. 配置环境变量
+### 1. Configure
 
 ```bash
 cp .env.example .env
 ```
 
-编辑 `.env` 文件，填入你的 DeepSeek API Key：
+Edit `.env` and set your DeepSeek API key:
 
-```
-DEEPSEEK_API_KEY=your-actual-api-key
+```env
+DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxx
 ```
 
-### 2. 启动服务
+### 2. Launch
 
 ```bash
 docker-compose up -d
 ```
 
-等待所有容器启动完成（首次启动需要下载 Embedding 模型，可能需要几分钟）：
+> First launch downloads the BGE Embedding model (~90 MB). This may take a few minutes.
 
 ```bash
-docker-compose ps
+docker-compose ps   # Verify all 6 services are running
 ```
 
-### 3. 导入示例数据
+### 3. Import Sample Data
 
 ```bash
 docker-compose exec backend python /app/scripts/init_data.py
 ```
 
-### 4. 访问系统
+### 4. Open the App
 
-- **前端界面**：http://localhost:3000
-- **API 文档**：http://localhost:8000/docs
-- **健康检查**：http://localhost:8000/health
+| Service | URL |
+|---------|-----|
+| **Frontend** | http://localhost:3000 |
+| **API Docs** | http://localhost:8000/docs |
+| **Health Check** | http://localhost:8000/health |
 
-## API 接口
+## 📡 API Reference
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| POST | `/api/chat` | 发送消息（同步） |
-| POST | `/api/chat/stream` | 发送消息（SSE 流式） |
-| GET | `/api/chat/sessions` | 获取会话列表 |
-| GET | `/api/chat/sessions/{id}/messages` | 获取会话历史 |
-| DELETE | `/api/chat/sessions/{id}` | 删除会话 |
-| POST | `/api/documents/upload` | 上传文档 |
-| GET | `/api/documents` | 文档列表 |
-| DELETE | `/api/documents/{id}` | 删除文档 |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/chat` | Send message (sync) |
+| `POST` | `/api/chat/stream` | Send message (SSE stream) |
+| `GET` | `/api/chat/sessions` | List sessions |
+| `GET` | `/api/chat/sessions/{id}/messages` | Get session history |
+| `DELETE` | `/api/chat/sessions/{id}` | Delete session |
+| `POST` | `/api/documents/upload` | Upload document |
+| `GET` | `/api/documents` | List documents |
+| `DELETE` | `/api/documents/{id}` | Delete document |
 
-## 项目结构
+## 📁 Project Structure
 
 ```
 HRAgent/
-├── backend/            # FastAPI 后端
+├── backend/                # FastAPI Backend
 │   └── app/
-│       ├── api/        # API 路由
-│       ├── models/     # 数据库模型
-│       ├── schemas/    # Pydantic 模型
-│       ├── services/   # 业务逻辑（Agent, RAG, Embedding, Milvus）
-│       └── utils/      # 工具（PDF 解析）
-├── frontend/           # Next.js 前端
-│   ├── app/            # 页面
-│   ├── components/     # Shadcn/ui 组件
-│   └── lib/            # API 客户端
-├── data/sample/        # 示例 HR 文档
-├── scripts/            # 数据初始化脚本
-└── docker-compose.yml
+│       ├── api/            #   API routes (chat, documents)
+│       ├── models/         #   SQLAlchemy models
+│       ├── schemas/        #   Pydantic schemas
+│       ├── services/       #   Agent · RAG · Embedding · Milvus
+│       └── utils/          #   PDF parser
+├── frontend/               # Next.js Frontend
+│   ├── app/                #   Pages & layout
+│   ├── components/ui/      #   Shadcn/ui components
+│   └── lib/                #   API client
+├── data/sample/            # Sample HR documents
+├── scripts/                # Data init script
+├── docker-compose.yml      # 6-service orchestration
+└── .env.example            # Environment template
 ```
 
-## 停止服务
+## 🛑 Stop Services
 
 ```bash
-docker-compose down        # 停止容器
-docker-compose down -v     # 停止并删除数据卷
+docker-compose down        # Stop containers
+docker-compose down -v     # Stop + remove data volumes
 ```
